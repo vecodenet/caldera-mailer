@@ -1,0 +1,14 @@
+{
+	"general":{
+		"from": "",
+		"to": "",
+		"cc": "",
+		"bcc": ""
+	},
+	"smtp": {
+		"host": "",
+		"port": "",
+		"user": "",
+		"password": ""
+	}
+}
