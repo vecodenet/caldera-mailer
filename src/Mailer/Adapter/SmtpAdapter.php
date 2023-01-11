@@ -88,7 +88,12 @@ class SmtpAdapter extends AbstractAdapter {
 			# Add attachments
 			if ( $message->hasAttachments() ) {
 				foreach ($message->getAttachments() as $attachment) {
-					$this->mail->addStringAttachment($attachment->getContents(), $attachment->getName(), PHPMailer::ENCODING_BASE64, '', $attachment->getType() == AttachmentType::Inline ? 'inline' : 'attachment' );
+					if ( $attachment->getType() == AttachmentType::EmbeddedImage ) {
+						$cid = pathinfo($attachment->getName(), PATHINFO_FILENAME);
+						$this->mail->addStringEmbeddedImage($attachment->getContents(), $cid, $attachment->getName(), PHPMailer::ENCODING_BASE64);
+					} else {
+						$this->mail->addStringAttachment($attachment->getContents(), $attachment->getName(), PHPMailer::ENCODING_BASE64, '', $attachment->getType() == AttachmentType::Inline ? 'inline' : 'attachment');
+					}
 				}
 			}
 			# Set subject and body

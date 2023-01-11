@@ -23,7 +23,8 @@ namespace Caldera\Tests\Mailer {
 	use Caldera\Mailer\Mailer;
 	use Caldera\Mailer\Adapter\MailAdapter;
 	use Caldera\Mailer\Adapter\SmtpAdapter;
-	use Caldera\Mailer\Message;
+    use Caldera\Mailer\AttachmentType;
+    use Caldera\Mailer\Message;
 	use Caldera\Mailer\MessageType;
 	use Caldera\Mailer\RecipientType;
 
@@ -83,16 +84,18 @@ namespace Caldera\Tests\Mailer {
 				'user' => self::$config->smtp->user,
 				'password' => self::$config->smtp->password,
 			];
+			$logo = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logo.png';
 			$adapter = new SmtpAdapter($options);
 			$mailer = new Mailer($adapter);
 			$adapter->getDriver()->SMTPDebug = 2;
 			$adapter->getDriver()->Debugoutput = 'error_log';
-			$message = new Message('Test', '<h1>This is a test</h1>', MessageType::Html);
+			$message = new Message('Test', '<h1><img src="cid:logo" width="240"></h1><h2>This is a test</h2>', MessageType::Html);
 			$message->setSender($sender, 'Test')
 				->addRecipient($recipient)
 				->addRecipient($recipient_cc, RecipientType::CC)
 				->addRecipient($recipient_bcc, RecipientType::BCC)
-				->addAttachment('Lorem ipsum', 'lorem.txt');
+				->addAttachment('Lorem ipsum', 'lorem.txt')
+				->addAttachment(file_get_contents($logo), 'logo.png', AttachmentType::EmbeddedImage);
 			$sent = $mailer->send($message);
 			$this->assertInstanceOf(SmtpAdapter::class, $mailer->getAdapter());
 			$this->assertTrue($sent);

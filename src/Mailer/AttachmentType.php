@@ -14,4 +14,5 @@ namespace Caldera\Mailer;
 enum AttachmentType: string {
 	case Regular = 'regular';
 	case Inline = 'inline';
+	case EmbeddedImage = 'image';
 }
